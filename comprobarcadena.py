@@ -11,12 +11,17 @@ def create_array(n,m):
 
 def open_file(name_file): #Funcion para abrir el archivo y extraer los datos mejorada respecto a la anterior
     ok=False
+    
     try:
         open(name_file, "r")
         ok = True
     except FileNotFoundError:
         print("Archivo no encontrado")
+        input("Presione enter para continuar...")
+        
+        
     if ok == True:
+        print("Archivo cargado correctamente")
         with open(name_file, "r") as file_automata:
             cs = int(file_automata.readline()) 
             ce = int(file_automata.readline()) 
@@ -57,8 +62,15 @@ def open_file(name_file): #Funcion para abrir el archivo y extraer los datos mej
                     rules[i][j] = str(rules[i][j]).replace(" ","",c_space)
                     j += 1
                 i += 1
-
-        return sig,f,rules
+        try:
+            return sig,f,rules
+        except UnboundLocalError:
+            print("Archivo no valido, sintaxis inapropiada")
+            input("Presione enter para continuar...")
+            return 0,0,0
+    
+    else:
+        return 0,0,0
 
 def evaluate_string(str_evaluate,sigma,f,rules):
     str_valid = True
@@ -70,7 +82,7 @@ def evaluate_string(str_evaluate,sigma,f,rules):
             if 0 == len(list_states): 
                 print("\nResultados -> ['NULL']")
                 print("\nCadena no valida")
-                os.system("pause")
+                input("Presione enter para continuar...")
                 str_valid = False
                 break
             else:
@@ -101,14 +113,14 @@ def evaluate_string(str_evaluate,sigma,f,rules):
         else:
             print(f"\nCadena no valida, el caracter '{i}' no pertenece a Sigma {sigma}") 
             str_valid = False
-            os.system("pause")
+            input("Presione enter para continuar...")
             break
         
     if str_valid == True:
         if 0 == len(list_states):
             print(f"\nResultados -> ['NULL']")
             print("\nCadena no valida")
-            os.system("pause")
+            input("Presione enter para continuar...")
         else: 
             print(f"\nResultados -> {list_states}")
 
@@ -116,12 +128,12 @@ def evaluate_string(str_evaluate,sigma,f,rules):
             while c < len(list_states): 
                 if list_states[c] in f:
                     print("\nCadena valida")
-                    os.system("pause")
+                    input("Presione enter para continuar...")
                     break  
 
                 if c+1 == len(list_states): 
                     print("\nCadena no valida")
-                    os.system("pause")
+                    input("Presione enter para continuar...")
                     break
 
                 c += 1
@@ -137,13 +149,23 @@ def main():
             print("1- CARGAR AUTOMATA")
             print("2- SALIR")
 
-            op = int(input("\nINGRESE EL NUMERO DE LA OPCION: "))
-
+            try:
+                op = int(input("\nINGRESE EL NUMERO DE LA OPCION: "))
+            except ValueError:
+                print("Ingrese un numero valido")
+                op = 0
+                input("Presione enter para continuar...")
+                clearConsole()
+                
             if op == 1:
                 name_file = input("Ingresa el nombre del automata: ")
                 clearConsole()
                 sigma, f, rules = open_file(name_file)
-                aut_loaded = True
+                if sigma == 0:
+                    aut_loaded = False
+                    clearConsole()
+                else:
+                    aut_loaded = True
 
             elif op == 2:
                 c = 1
@@ -154,12 +176,12 @@ def main():
             print(f"Estados Finales -> {f}")
             print(f"Reglas -> {rules}")
 
-            print("\n-- MENU --")
-            print("1- CARGAR OTRO AUTOMATA")
-            print("2- EVALUAR CADENA")
-            print("3- SALIR")
+            print("\n-- Elija, por favor --")
+            print("1- Elegir otro automata")
+            print("2- Comprobar cadena")
+            print("3- Salir")
 
-            op = int(input("\nINGRESE EL NUMERO DE LA OPCION: "))
+            op = int(input("\nIngrese su selección: "))
 
             if op == 1:
                 name_file = input("Ingresa el nombre del otro automata: ")
