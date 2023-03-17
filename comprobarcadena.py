@@ -1,5 +1,40 @@
 import numpy as np
 import os
+import random
+clearConsole = lambda: os.system('cls' if os.name in ('nt', 'dos') else 'clear')
+
+def generarCadenas(vectorN, MatrizP):
+    # Genera un numero aleatorio para el renglon
+    rRandom = random.randint(0, len(MatrizP[0])-1)
+    # Genera un numero aleatorio para el vector
+    cadena=MatrizP[0][rRandom]
+    ok=evaluar(cadena, vectorN)
+    while ok == False:
+        cadena=reemplazo(cadena, MatrizP, vectorN)
+        ok=evaluar(cadena, vectorN)
+    return cadena
+    
+def evaluar(cadena, vectorN):
+    ok=0
+    for i in range(0, len(cadena)):
+        if cadena[i] in vectorN:
+            ok=ok+1
+    if ok == 0:
+        return True
+    else:
+        return False
+        
+    
+def reemplazo(cadena, MatrizP, vectorN):
+    for i in range(len(cadena)):
+        if cadena[i] in vectorN:
+            for j in range(len(vectorN)):
+                if cadena[i] == vectorN[j]:
+                    ind=vectorN.index(cadena[i])
+                    rRandom = random.randint(0, len(MatrizP[ind])-1)
+                    cadena=cadena.replace(cadena[i], MatrizP[ind][rRandom])
+    cadena = cadena.replace(' ', '')
+    return cadena
 
 def create_array(n,m):
     array1 = []
@@ -9,7 +44,47 @@ def create_array(n,m):
 
     return array1
 
-def open_file(name_file): #Funcion para abrir el archivo y extraer los datos mejorada respecto a la anterior
+def open_gram(fileName):
+    try:
+        txt = open(fileName, 'r')
+        N = txt.readline() #Recupera el conjunto de no terminales
+        T = txt.readline() #Recupera el conjunto de terminales
+        P = txt.readline() #Recupera el conjunto de producciones
+        RdeP = txt.readline() #Recupera el numero de producciones
+        vectorN = txt.readline() #Recupera el numero de renglones de la matriz
+        vectorN = vectorN.split('{', 1)[1]
+        vectorN = vectorN.split('}', 1)[0]
+        vectorN = vectorN.split(',') #Separa los renglones
+        vectorT = txt.readline()
+        vectorT = vectorT.split('{', 1)[1]
+        vectorT = vectorT.split('}', 1)[0]
+        vectorT = vectorT.split(',') #Separa los elementos del vector
+        Matriz = txt.readlines()
+        MatrizClear=[] #Matriz auxiliar para limpiar los datos
+        MatrizP = [] #Matriz de producciones
+        for i in range(len(Matriz)):
+            if i == len(Matriz)-1:
+                Matriz[i]=Matriz[i].split('}', 1)[0]
+            if i == 0:
+                Matriz[i] = Matriz[i].split('{', 1)[1]
+            if Matriz[i] == '\n':                           #Elimina los saltos de linea y todo el cochinero
+                Matriz[i].replace('\n', '')
+            Matriz[i] = Matriz[i].split('>', 1)
+            if(len(Matriz[i])==2):
+                MatrizClear.append(Matriz[i][1])
+        for i in range(len(MatrizClear)):
+            MatrizClear[i] = MatrizClear[i].split(',')[0]
+            MatrizP.append(MatrizClear[i].split('|'))
+
+        print(MatrizP)
+        txt.close()
+        return N, T, P, RdeP, vectorN, vectorT, MatrizP
+    except FileNotFoundError:
+        print("Archivo no encontrado")
+        input("Presione enter para continuar...")
+        return 0,0,0,0,0,0,0
+
+def open_aut(name_file): #Funcion para abrir el archivo y extraer los datos mejorada respecto a la anterior
     ok=False
     
     try:
@@ -137,20 +212,72 @@ def evaluate_string(str_evaluate,sigma,f,rules):
                     break
 
                 c += 1
+                
+def auth(sigma, f, rules):
+    print(f"\nSigma -> {sigma}")
+    print(f"Estados Finales -> {f}")
+    print(f"Reglas -> {rules}")
+    print("\n-- Elija, por favor --")
+    print("1- Elegir otro automata")
+    print("2- Comprobar cadena")
+    print("4- Salir")
+    op = int(input("\nIngrese su selección: "))
+    if op == 1:
+        name_file = input("Ingresa el nombre del otro automata: ")
+        clearConsole()
+        sigma, f, rules = open_aut(name_file)
+        
+    elif op == 2:
+        str_evaluate = input("Ingrese la cadena a evaluar: ")
+        evaluate_string(str_evaluate,sigma,f,rules)
+        clearConsole()
+        main()
+    elif op == 3:
+        return 1
+    
+def gram(N, T, P, RdeP, vectorN, vectorT, MatrizP):
+    print(f"""\nN -> {N}
+    T -> {T}
+    P -> {P}
+    RdeP -> {RdeP}
+    vectorN -> {vectorN}
+    vectorT -> {vectorT}
+    MatrizP -> {MatrizP}
+    \n-- Elija, por favor --"
+    1- Elegir otra gramática"
+    2- Generar cadena"
+    3- Salir""")
+    op = int(input("\nIngrese su selección: "))
+    if(op==1):
+        name_file=input("Ingrese el nombre de la gramática: ")
+        N, T, P, RdeP, vectorN, vectorT, MatrizP=open_gram(name_file)
+    elif(op==2):
+        cadena=generarCadenas(vectorN, MatrizP)
+        clearConsole()
+        print(f"Cadena generada: {cadena}")
+        input("Presione enter para continuar...")
+        clearConsole()
+        main()
+    elif(op==3):
+        return 1
+    
 
 def main():
-    clearConsole = lambda: os.system('cls' if os.name in ('nt', 'dos') else 'clear')
+    
     aut_loaded = False
 
     c = 0
+    N=0
     while c == 0:
         if aut_loaded == False:
-            print("\n-- MENU --")
-            print("1- CARGAR AUTOMATA")
-            print("2- SALIR")
+            print("\n-- Carga de archivos --")
+            print("1- Cargar automata")
+            print("2- Cargar gramática")
+            print("3- Salir")
 
+            op=0
             try:
-                op = int(input("\nINGRESE EL NUMERO DE LA OPCION: "))
+                op = int(input("\nIngrese su elección: "))
             except ValueError:
                 print("Ingrese un numero valido")
                 op = 0
@@ -160,42 +287,56 @@ def main():
             if op == 1:
                 name_file = input("Ingresa el nombre del automata: ")
                 clearConsole()
-                sigma, f, rules = open_file(name_file)
+                sigma, f, rules = open_aut(name_file)
                 if sigma == 0:
                     aut_loaded = False
                     clearConsole()
                 else:
                     aut_loaded = True
-
+                    
             elif op == 2:
-                c = 1
-                break
+                name_file=input("Ingrese el nombre de la gramática")
+                N, T, P, RdeP, vectorN, vectorT, MatrizP=open_gram(name_file)
+                if N == 0:
+                    aut_loaded = False
+                    clearConsole()
+                else:
+                    aut_loaded = True
 
-        elif aut_loaded == True:
-            print(f"\nSigma -> {sigma}")
-            print(f"Estados Finales -> {f}")
-            print(f"Reglas -> {rules}")
-
-            print("\n-- Elija, por favor --")
-            print("1- Elegir otro automata")
-            print("2- Comprobar cadena")
-            print("3- Salir")
-
-            op = int(input("\nIngrese su selección: "))
-
-            if op == 1:
-                name_file = input("Ingresa el nombre del otro automata: ")
-                clearConsole()
-                sigma, f, rules = open_file(name_file)
-
-            elif op == 2:
-                str_evaluate = input("Ingrese la cadena a evaluar: ")
-                evaluate_string(str_evaluate,sigma,f,rules)
-                clearConsole()
-            
             elif op == 3:
                 c = 1
                 break
+        
+        elif aut_loaded == True:
+            if op==1:
+                c=auth(sigma, f, rules)
 
+            elif op==2:
+                c=gram(N, T, P, RdeP, vectorN, vectorT, MatrizP)
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                    
 if __name__ == "__main__":
     main()
