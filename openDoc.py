@@ -50,6 +50,7 @@ def open_gram(fileName):
     
 def open_aut(name_file): #Funcion para abrir el archivo y extraer los datos mejorada respecto a la anterior
     ok=False
+    isDeterministic = True
     
     try:
         open(name_file, "r")
@@ -101,8 +102,20 @@ def open_aut(name_file): #Funcion para abrir el archivo y extraer los datos mejo
                     rules[i][j] = str(rules[i][j]).replace(" ","",c_space)
                     j += 1
                 i += 1
+                
+            for i in rules:
+                for j in i:
+                    if j != 'NULL':
+                        j_str = str(j)
+                        dig=len(j_str)
+                        if dig > 1:
+                            j_list=[int(d) for d in str(j)]
+                            rules[rules.index(i)][rules[rules.index(i)].index(j)]=j_list
+                            isDeterministic = False
+                        
         try:
-            return sig,f,rules
+            return sig,f,rules,isDeterministic
+        
         except UnboundLocalError:
             print("Archivo no valido, sintaxis inapropiada")
             input("Presione enter para continuar...")
