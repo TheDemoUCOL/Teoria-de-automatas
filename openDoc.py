@@ -1,4 +1,17 @@
-def create_array(n,m):
+def determinista(rules):    #Convierte las gramaticas dobles en separadas
+    deterministic=True
+    for i in rules:
+        for j in i:
+            if j != 'NULL':
+                j_str = str(j)
+                dig=len(j_str)
+                if dig > 1:
+                    j_list=[int(d) for d in str(j)]
+                    rules[rules.index(i)][rules[rules.index(i)].index(j)]=j_list
+                    deterministic=False
+    return deterministic
+
+def create_array(n,m): #Crea un arreglo de n x m
     array1 = []
     for i in range(n):
         a = [0]*m
@@ -103,15 +116,7 @@ def open_aut(name_file): #Funcion para abrir el archivo y extraer los datos mejo
                     j += 1
                 i += 1
                 
-            for i in rules:
-                for j in i:
-                    if j != 'NULL':
-                        j_str = str(j)
-                        dig=len(j_str)
-                        if dig > 1:
-                            j_list=[int(d) for d in str(j)]
-                            rules[rules.index(i)][rules[rules.index(i)].index(j)]=j_list
-                            isDeterministic = False
+            isDeterministic=determinista(rules)
                         
         try:
             return sig,f,rules,isDeterministic
@@ -119,9 +124,9 @@ def open_aut(name_file): #Funcion para abrir el archivo y extraer los datos mejo
         except UnboundLocalError:
             print("Archivo no valido, sintaxis inapropiada")
             input("Presione enter para continuar...")
-            return 0,0,0
+            return 0,0,0,0
     
     else:
-        return 0,0,0
+        return 0,0,0,0
     
     

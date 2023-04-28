@@ -2,8 +2,20 @@ import numpy as np
 import os
 import random
 from openDoc import open_aut, open_gram
+from main import *
 
 clearConsole = lambda: os.system('cls' if os.name in ('nt', 'dos') else 'clear')
+
+def determinista(rules):
+    for i in rules:
+        for j in i:
+            if j != 'NULL':
+                j_str = str(j)
+                dig=len(j_str)
+                if dig > 1:
+                    j_list=[int(d) for d in str(j)]
+                    rules[rules.index(i)][rules[rules.index(i)].index(j)]=j_list
+                    return False
 
 def generarCadenas(vectorN, MatrizP):
     # Genera un numero aleatorio para el renglon
@@ -104,106 +116,3 @@ def evaluate_string(str_evaluate,sigma,f,rules):
 
                 c += 1
                 
-def auth(sigma, f, rules):
-    print(f"\nSigma -> {sigma}")
-    print(f"Estados Finales -> {f}")
-    print(f"Reglas -> {rules}")
-    print("\n-- Elija, por favor --")
-    print("1- Elegir otro automata")
-    print("2- Comprobar cadena")
-    print("4- Salir")
-    op = int(input("\nIngrese su selección: "))
-    if op == 1:
-        name_file = input("Ingresa el nombre del otro automata: ")
-        clearConsole()
-        sigma, f, rules = open_aut(name_file)
-        
-    elif op == 2:
-        str_evaluate = input("Ingrese la cadena a evaluar: ")
-        evaluate_string(str_evaluate,sigma,f,rules)
-        clearConsole()
-        main()
-    elif op == 3:
-        return 1
-    
-def gram(N, T, P, RdeP, vectorN, vectorT, MatrizP):
-    print(f"""\nN -> {N}
-    T -> {T}
-    P -> {P}
-    RdeP -> {RdeP}
-    vectorN -> {vectorN}
-    vectorT -> {vectorT}
-    MatrizP -> {MatrizP}
-    \n-- Elija, por favor --"
-    1- Elegir otra gramática"
-    2- Generar cadena"
-    3- Salir""")
-    op = int(input("\nIngrese su selección: "))
-    if(op==1):
-        name_file=input("Ingrese el nombre de la gramática: ")
-        N, T, P, RdeP, vectorN, vectorT, MatrizP=open_gram(name_file)
-    elif(op==2):
-        cadena=generarCadenas(vectorN, MatrizP)
-        clearConsole()
-        print(f"Cadena generada: {cadena}")
-        input("Presione enter para continuar...")
-        clearConsole()
-        main()
-    elif(op==3):
-        return 1
-    
-
-def main():
-    
-    aut_loaded = False
-
-    c = 0
-    N=0
-    while c == 0:
-        if aut_loaded == False:
-            print("\n-- Carga de archivos --")
-            print("1- Cargar automata")
-            print("2- Cargar gramática")
-            print("3- Salir")
-
-            op=0
-            try:
-                op = int(input("\nIngrese su elección: "))
-            except ValueError:
-                print("Ingrese un numero valido")
-                op = 0
-                input("Presione enter para continuar...")
-                clearConsole()
-                
-            if op == 1:
-                name_file = input("Ingresa el nombre del automata: ")
-                clearConsole()
-                sigma, f, rules = open_aut(name_file)
-                if sigma == 0:
-                    aut_loaded = False
-                    clearConsole()
-                else:
-                    aut_loaded = True
-                    
-            elif op == 2:
-                name_file=input("Ingrese el nombre de la gramática")
-                N, T, P, RdeP, vectorN, vectorT, MatrizP=open_gram(name_file)
-                if N == 0:
-                    aut_loaded = False
-                    clearConsole()
-                else:
-                    aut_loaded = True
-
-            elif op == 3:
-                c = 1
-                break
-        
-        elif aut_loaded == True:
-            if op==1:
-                c=auth(sigma, f, rules)
-
-            elif op==2:
-                c=gram(N, T, P, RdeP, vectorN, vectorT, MatrizP)
-         
-if __name__ == "__main__":
-    main()
