@@ -1,11 +1,36 @@
 import comprobarcadena as ca
 import openDoc as od
 import os
-import convert
+from convert import AFNDtoAFN
+import minimizar
 
 clearConsole = lambda: os.system('cls' if os.name in ('nt', 'dos') else 'clear')
 
-
+def convert(sigma, f, rules, isDeterministic):
+    print(f"\nSigma -> {sigma}")
+    print(f"Estados Finales -> {f}")
+    print(f"Reglas -> {rules}")
+    print("\n-- Elija, por favor --")
+    print("1- Elegir otro automata")
+    print("2- Comprobar cadena")
+    print("3- Minimizar automata")
+    print("4- Salir")
+    
+    op = int(input("\nIngrese su selección: "))
+    if op == 1:
+        name_file = input("Ingresa el nombre del otro automata: ")
+        clearConsole()
+        sig,f,rules,isDeterministic = od.open_aut(name_file)
+        auth(sig,f,rules,isDeterministic)
+        
+    elif op == 2:
+        str_evaluate = input("Ingrese la cadena a evaluar: ")
+        ca.evaluate_string(str_evaluate,sigma,f,rules)
+        clearConsole()
+        main()
+        
+    elif op == 3:
+        minimizar.mini(sigma, f, rules)
 
 def auth(sigma, f, rules, isDeterministic):
     print(f"\nSigma -> {sigma}")
@@ -24,6 +49,7 @@ def auth(sigma, f, rules, isDeterministic):
         name_file = input("Ingresa el nombre del otro automata: ")
         clearConsole()
         sig,f,rules,isDeterministic = od.open_aut(name_file)
+        auth(sig,f,rules,isDeterministic)
         
     elif op == 2:
         str_evaluate = input("Ingrese la cadena a evaluar: ")
@@ -32,7 +58,7 @@ def auth(sigma, f, rules, isDeterministic):
         main()
     elif op == 3:
         if isDeterministic == False:
-            sigma, f, rules = convert.AFNDtoAFN(sigma, f, rules)
+            sigma, f, rules = AFNDtoAFN(sigma, f, rules)
             clearConsole()
             auth(sigma, f, rules, isDeterministic=True)
         else:
@@ -68,8 +94,10 @@ def gram(N, T, P, RdeP, vectorN, vectorT, MatrizP):
 
 def main():
     aut_loaded = False
-
-    c = 0
+    sigma, f, rules, isDeterministic=0,0,0,0
+    N, T, P, RdeP, vectorN, vectorT, MatrizP=0,0,0,0,0,0,0
+    op=0
+    c=0
     N=0
     while c == 0:
         if aut_loaded == False:
@@ -111,12 +139,13 @@ def main():
                 c = 1
                 break
         
-        elif aut_loaded == True:
-            if op==1:#type: ignore
-                c=auth(sigma, f, rules, isDeterministic) #type: ignore
+        else:
+            
+            if op==1:
+                c=auth(sigma, f, rules, isDeterministic) 
 
-            elif op==2:#type: ignore
-                c=gram(N, T, P, RdeP, vectorN, vectorT, MatrizP) #type: ignore
+            elif op==2:
+                c=gram(N, T, P, RdeP, vectorN, vectorT, MatrizP) 
                 
 if __name__ == "__main__":
     main()
