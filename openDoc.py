@@ -45,7 +45,7 @@ def open_gram(fileName):
                 Matriz[i] = Matriz[i].split('{', 1)[1]
             if Matriz[i] == '\n':                           #Elimina los saltos de linea y todo el cochinero
                 Matriz[i].replace('\n', '')
-            Matriz[i] = Matriz[i].split('>', 1)
+            Matriz[i] = Matriz[i].split('>', 1) # type: ignore
             if(len(Matriz[i])==2):
                 MatrizClear.append(Matriz[i][1])
         for i in range(len(MatrizClear)):
@@ -104,7 +104,7 @@ def open_aut(name_file): #Funcion para abrir el archivo y extraer los datos mejo
                             i2 = linea.index(',')
                         elif '}' in linea:
                             i2 = linea.index('}')
-                        rules[c] = linea[i1+1:i2].split('|')
+                        rules[c] = linea[i1+1:i2].split('|') #type: ignore
                         c+=1
 
             i = 0
@@ -119,7 +119,7 @@ def open_aut(name_file): #Funcion para abrir el archivo y extraer los datos mejo
             isDeterministic=determinista(rules)
                         
         try:
-            return sig,f,rules,isDeterministic
+            return sig,f,rules,isDeterministic #type: ignore
         
         except UnboundLocalError:
             print("Archivo no valido, sintaxis inapropiada")

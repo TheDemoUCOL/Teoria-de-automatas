@@ -5,6 +5,8 @@ import convert
 
 clearConsole = lambda: os.system('cls' if os.name in ('nt', 'dos') else 'clear')
 
+
+
 def auth(sigma, f, rules, isDeterministic):
     print(f"\nSigma -> {sigma}")
     print(f"Estados Finales -> {f}")
@@ -13,7 +15,7 @@ def auth(sigma, f, rules, isDeterministic):
     print("1- Elegir otro automata")
     print("2- Comprobar cadena")
     if isDeterministic == False:
-        print("3-Convertir a deterministico")
+        print("3- Convertir a deterministico")
         print("4- Salir")
     else:
         print("3- Salir")
@@ -21,7 +23,7 @@ def auth(sigma, f, rules, isDeterministic):
     if op == 1:
         name_file = input("Ingresa el nombre del otro automata: ")
         clearConsole()
-        sigma, f, rules = od.open_aut(name_file)
+        sig,f,rules,isDeterministic = od.open_aut(name_file)
         
     elif op == 2:
         str_evaluate = input("Ingrese la cadena a evaluar: ")
@@ -32,7 +34,7 @@ def auth(sigma, f, rules, isDeterministic):
         if isDeterministic == False:
             sigma, f, rules = convert.AFNDtoAFN(sigma, f, rules)
             clearConsole()
-            auth(sigma, f, rules, isDeterministic)
+            auth(sigma, f, rules, isDeterministic=True)
         else:
             return 1
             
@@ -110,11 +112,11 @@ def main():
                 break
         
         elif aut_loaded == True:
-            if op==1:
-                c=auth(sigma, f, rules, isDeterministic)
+            if op==1:#type: ignore
+                c=auth(sigma, f, rules, isDeterministic) #type: ignore
 
-            elif op==2:
-                c=gram(N, T, P, RdeP, vectorN, vectorT, MatrizP)
+            elif op==2:#type: ignore
+                c=gram(N, T, P, RdeP, vectorN, vectorT, MatrizP) #type: ignore
                 
 if __name__ == "__main__":
     main()

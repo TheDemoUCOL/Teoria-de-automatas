@@ -1,4 +1,73 @@
+import os
+clearConsole = lambda: os.system('cls' if os.name in ('nt', 'dos') else 'clear')
+
+
 def AFNDtoAFN(sigma, f, rules):
-    print(rules[0])
-    input("Press ok")
-    return 0,0,0
+    clearConsole()
+    autconvert = {'0':rules[0]}
+    
+    for x in autconvert['0']:
+        for y in x:
+            if y != 'NULL':
+                if y not in autconvert.keys():
+                    autconvert["".join(str(x))] = []
+    it = True            
+    while it:
+        fill(autconvert, rules)
+        it, autconvert=fill_keys(autconvert, rules)
+    aux = []
+    for i in autconvert.keys():
+        for j in i:
+            if j.isdigit():
+                if j in f:
+                    aux.append(i)
+    f=aux   
+ 
+    return sigma, f, autconvert
+
+def fill_keys(autconvert, rules):
+    aux={}
+    
+    for values in autconvert.values():
+        for value in values:
+            if value != 'NULL':
+                if str(value) not in list(autconvert.keys()):
+                    aux.update({str(value):[[],[]]})
+    if aux == {}:
+        it = False
+    else:           #indica si se hizo o no iteración
+        it = True
+    
+    autconvert.update(aux)
+    return it, autconvert
+
+def fill(autconvert, rules):
+    for keys in autconvert.keys():
+            #print("key",keys)
+            if keys != '0':
+                aux = [[],[]]
+                for y in keys:
+                    if y.isdigit():
+                        #print("y",y)                       #permite obtener los estados de las llaves desde 
+                        for z in rules[int(y)]:             #la tabla de transiciones
+                            if z != 'NULL':
+                                aux[rules[int(y)].index(z)].append(z)            
+
+                for state in aux:
+                    aux[aux.index(state)] = [elem for sublist in state for elem in sublist] #extrae los elementos de las sublistas
+
+                for state in aux:
+                    for state2 in state:
+                        state[state.index(state2)] = int(state2) #convierte los elementos de las listas en enteros no repetidos
+                    aux[aux.index(state)] = list(set(state))
+                #print("aux",aux)
+                autconvert[keys] = aux
+                #print(set(aux1))
+    return autconvert
+
+
+if __name__ == "__main__":
+    sigma = []
+    f = ['2', '4']
+    rules = [[[0, 3], [0, 1]], ['NULL', '2'], ['2', '2'], ['4', 'NULL'], ['4', '4']]
+    AFNDtoAFN(sigma, f, rules)
