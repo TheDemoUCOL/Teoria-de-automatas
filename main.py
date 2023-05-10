@@ -60,7 +60,7 @@ def auth(sigma, f, rules, isDeterministic):
         if isDeterministic == False:
             sigma, f, rules = AFNDtoAFN(sigma, f, rules)
             clearConsole()
-            auth(sigma, f, rules, isDeterministic=True)
+            convert(sigma, f, rules, isDeterministic=True)
         else:
             return 1
             

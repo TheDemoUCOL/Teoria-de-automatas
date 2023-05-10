@@ -40,6 +40,7 @@ def fill_keys(autconvert, rules):
     return it, autconvert
 
 def fill(autconvert, rules):
+    #print(rules)
     for keys in autconvert.keys():
             #print("key",keys)
             if keys != '0':
@@ -47,6 +48,7 @@ def fill(autconvert, rules):
                 for y in keys:
                     if y.isdigit():
                         #print("y",y)                       #permite obtener los estados de las llaves desde 
+                        #print("rules",rules[int(y)])
                         for z in rules[int(y)]:             #la tabla de transiciones
                             if z != 'NULL':
                                 aux[rules[int(y)].index(z)].append(z)            
@@ -64,8 +66,8 @@ def fill(autconvert, rules):
     return autconvert
 
 
-# if __name__ == "__main__":
-#     sigma = []
-#     f = ['2', '4']
-#     rules = [[[0, 3], [0, 1]], ['NULL', '2'], ['2', '2'], ['4', 'NULL'], ['4', '4']]
-#     AFNDtoAFN(sigma, f, rules)
+#if __name__ == "__main__":
+#    sigma = []
+#    f = ['2', '4']
+#    rules = [[[0, 5], [1, 2]], [[1, 3], [1, 0]], [[1, 0], '0'], ['3', '2']]
+#    AFNDtoAFN(sigma, f, rules)
