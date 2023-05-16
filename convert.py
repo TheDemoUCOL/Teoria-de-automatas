@@ -51,12 +51,14 @@ def fill(autconvert, rules):
                         #print("rules",rules[int(y)])
                         for z in rules[int(y)]:             #la tabla de transiciones
                             if z != 'NULL':
-                                aux[rules[int(y)].index(z)].append(z)            
+                                #print("z",z)
+                                for w in z:
+                                    aux[rules[int(y)].index(z)].append(w)
+                                    #print("agregado",[rules[int(y)]])
 
+                #print("aux",aux)
                 for state in aux:
-                    aux[aux.index(state)] = [elem for sublist in state for elem in sublist] #extrae los elementos de las sublistas
-
-                for state in aux:
+                    #print("state",state)
                     for state2 in state:
                         state[state.index(state2)] = int(state2) #convierte los elementos de las listas en enteros no repetidos
                     aux[aux.index(state)] = list(set(state))
@@ -66,8 +68,8 @@ def fill(autconvert, rules):
     return autconvert
 
 
-#if __name__ == "__main__":
-#    sigma = []
-#    f = ['2', '4']
-#    rules = [[[0, 5], [1, 2]], [[1, 3], [1, 0]], [[1, 0], '0'], ['3', '2']]
-#    AFNDtoAFN(sigma, f, rules)
+if __name__ == "__main__":
+    sigma = []
+    f = ['2', '4']
+    rules = [[[0, 3], [0, 1]], ['NULL', '2'], ['2', '2'], ['4', 'NULL'], ['4', '4']]
+    print(AFNDtoAFN(sigma, f, rules))
