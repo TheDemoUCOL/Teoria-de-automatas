@@ -39,37 +39,35 @@ def fill_keys(autconvert, rules):
     autconvert.update(aux)
     return it, autconvert
 
-def fill(autconvert, rules):
-    #print(rules)
-    for keys in autconvert.keys():
-            #print("key",keys)
-            if keys != '0':
-                aux = [[],[]]
-                for y in keys:
-                    if y.isdigit():
-                        #print("y",y)                       #permite obtener los estados de las llaves desde 
-                        #print("rules",rules[int(y)])
-                        for z in rules[int(y)]:             #la tabla de transiciones
-                            if z != 'NULL':
-                                #print("z",z)
-                                for w in z:
-                                    aux[rules[int(y)].index(z)].append(w)
-                                    #print("agregado",[rules[int(y)]])
+def flatten_list(lst): #descomprime listas anidadas
+    flattened_list = []
+    for item in lst:
+        if isinstance(item, list):  # Verifica si el elemento es una lista anidada
+            flattened_list.extend(flatten_list(item))  # Llama recursivamente a la función para aplanar la lista anidada
+        else:
+            flattened_list.append(int(item))  # Convierte el valor a entero y lo agrega a la lista aplanada
+    return list(set(flattened_list)) #elimina duplicados
 
-                #print("aux",aux)
-                for state in aux:
-                    #print("state",state)
-                    for state2 in state:
-                        state[state.index(state2)] = int(state2) #convierte los elementos de las listas en enteros no repetidos
-                    aux[aux.index(state)] = list(set(state))
-                #print("aux",aux)
-                autconvert[keys] = aux
-                #print(set(aux1))
+def fill(autconvert, rules):
+    for key in autconvert.keys():
+        if key != '0':
+            aux = [[],[]]
+            for value in key:
+                if value.isdigit():
+                    for i in range(len(rules[int(value)])):
+                        if rules[int(value)][i] != 'NULL':
+                            aux[i].append(rules[int(value)][i])
+                            
+            for i in range(len(aux)):
+                aux[i] = flatten_list(aux[i])                    
+            autconvert[key] = aux
+            #print(autconvert, "\n")
+            #input()
     return autconvert
 
 
-if __name__ == "__main__":
+"""if __name__ == "__main__":
     sigma = []
     f = ['2', '4']
     rules = [[[0, 3], [0, 1]], ['NULL', '2'], ['2', '2'], ['4', 'NULL'], ['4', '4']]
-    print(AFNDtoAFN(sigma, f, rules))
+    AFNDtoAFN(sigma, f, rules)"""

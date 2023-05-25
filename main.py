@@ -3,13 +3,20 @@ import openDoc as od
 import os
 from convert import AFNDtoAFN
 import minimizar
+from tabulate import tabulate
 
 clearConsole = lambda: os.system('cls' if os.name in ('nt', 'dos') else 'clear')
+
+def tablitas(rules, sigma):
+    tabla=[]
+    for key, value in rules.items():
+        tabla.append([key, value])
+    return tabulate(tabla, headers=['Estado', 'Reglas'], tablefmt='grid')
 
 def convert(sigma, f, rules, isDeterministic):
     print(f"\nSigma -> {sigma}")
     print(f"Estados Finales -> {f}")
-    print(f"Reglas -> {rules}")
+    print(f"Reglas -> \n{ tablitas(rules, sigma)}")
     print("\n-- Elija, por favor --")
     print("1- Elegir otro automata")
     print("2- Comprobar cadena")
