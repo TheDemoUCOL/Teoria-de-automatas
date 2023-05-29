@@ -1,14 +1,15 @@
 import os
 clearConsole = lambda: os.system('cls' if os.name in ('nt', 'dos') else 'clear')
 
-def AFNDtoAFN (sigma, f, rules):
+def AFNDtoAFN(sigma, f, rules):
     clearConsole()
-    autconvert = {'0':rules[0]}
+    autconvert = {'0': rules[0]}
     for x in autconvert['0']:
-        for y in x:
+        for y in x: 
             if y != 'NULL':
                 if y not in autconvert.keys():
                     autconvert["".join(str(x))] = []
+    
     it = True            
     while it:
         fill(autconvert, rules)
@@ -19,8 +20,18 @@ def AFNDtoAFN (sigma, f, rules):
             if j.isdigit():
                 if j in f:
                     aux.append(i)
-    f=aux   
-
+    f=aux
+    
+    for i in range(len(f)):
+        if f[i].isdigit():
+            if f[i] is list:
+                f[i] = f[i].Short() 
+    f=list(set(f))
+    
+    print(f"\nSigma -> {sigma}")
+    print(f"Estados Finales -> {f}")
+    print(f"Reglas -> {autconvert}")
+    
     return sigma, f, autconvert
 
 def fill_keys(autconvert, rules):
@@ -66,8 +77,8 @@ def fill(autconvert, rules):
     return autconvert
 
 
-"""if __name__ == "__main__":
+if __name__ == "__main__":
     sigma = []
     f = ['2', '4']
     rules = [[[0, 3], [0, 1]], ['NULL', '2'], ['2', '2'], ['4', 'NULL'], ['4', '4']]
-    AFNDtoAFN(sigma, f, rules)"""
+    AFNDtoAFN(sigma, f, rules)

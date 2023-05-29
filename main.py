@@ -10,8 +10,8 @@ clearConsole = lambda: os.system('cls' if os.name in ('nt', 'dos') else 'clear')
 def tablitas(rules, sigma):
     tabla=[]
     for key, value in rules.items():
-        tabla.append([key, value])
-    return tabulate(tabla, headers=['Estado', 'Reglas'], tablefmt='grid')
+        tabla.append([key, value[0], value[1]])
+    return tabulate(tabla, headers=['Estado', '0', '1'], tablefmt='fancy_outline')
 
 def convert(sigma, f, rules, isDeterministic):
     print(f"\nSigma -> {sigma}")
@@ -37,7 +37,8 @@ def convert(sigma, f, rules, isDeterministic):
         main()
         
     elif op == 3:
-        minimizar.mini(sigma, f, rules)
+        minimizado=minimizar.mini(sigma, f, rules)
+        print("El automata minimizado es: \n",tablitas(minimizado, sigma))
 
 def auth(sigma, f, rules, isDeterministic):
     print(f"\nSigma -> {sigma}")
